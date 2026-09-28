@@ -1,55 +1,250 @@
-import React, { useState } from 'react';
-import styled from "styled-components"
-import { FaArrowLeft, FaGoogle, FaMicrosoft, FaApple, FaEye, FaEyeSlash} from 'react-icons/fa';
+import { useState } from 'react';
+import styled, { keyframes } from "styled-components"
+import { FaArrowLeft, FaGoogle, FaMicrosoft, FaApple, FaChevronLeft, FaMapMarkerAlt, FaLock} from 'react-icons/fa';
+import MoradIALogo from '../../assets/MoradIALogo.svg';
+import FotoPersonaImg from '../../assets/persona.jpeg';
+import { entrarCom } from '../../lib/supabase.js';
+
+const NavContainer = styled.nav`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding-top: 40px; /* Ajuste para o espaçamento no topo */
+    font-family: "Inter", sans-serif;
+`;
+
+const VoltarLink = styled.a`
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #6B7280;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: color 0.2s;
+
+    &:hover {
+        color: var(--roxo-moradia);
+    }
+`;
+
+const Marca = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 10px;
+`;
+
+const MarcaIcone = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background-color: var(--roxo-moradia);
+
+    img {
+        width: 22px;
+        height: 22px;
+    }
+`;
+
+const MarcaNome = styled.span`
+    font-family: var(--fonte-moradia);
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: -0.02em;
+    color: #111827;
+`;
 
 const CampoApresentacao = styled.section`
     display: flex;
     flex-direction: row-reverse;
     gap: 10px;
+    height: 100vh;
+    overflow: hidden;
 `
 const DivTextos = styled.div`
     display: flex;
+    flex: 1;
     flex-direction: column;
-    justify-content: flex-start;
-    margin-top: 100px;
-    gap: 32px;
+    justify-content: center;
+    padding: 0 80px;
 `
 
 const TextosApresentacao = styled.div`
     display: flex;
     flex-direction: column;
     gap: 16px;
-    margin-right: 160px;
+    max-width: 560px;
 `
 
 const TituloApresentacao = styled.h2`
     margin: 0;
-    font-stretch: 100%;
-    line-height: 110.00000000000001%;
-    style: extra-bold;
+    line-height: 1.1;
     font-family: var(--fonte-moradia);
     font-weight: 700;
-    font-size: 32px;
-    width: 550px;
+    font-size: 40px;
+    letter-spacing: -0.02em;
+    color: #111827;
 `
 const DescricaoApresentacao = styled.p`
     font-family: var(--fonte-moradia);
     text-align: left;
     font-weight: 400;
     font-size: 16px;
+    line-height: 1.6;
     color: #6B7280;
-    width: 600px;
 `
+
+const preencher = keyframes`
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+`;
+
+const CartaoAnalise = styled.div`
+    margin-top: 40px;
+    max-width: 480px;
+    padding: 24px;
+    background-color: #FFFFFF;
+    border: 1px solid #E0E7FF;
+    border-radius: 16px;
+    box-shadow: 0 24px 48px -24px rgba(79, 70, 229, 0.35);
+    font-family: var(--fonte-moradia);
+`;
+
+const Perfil = styled.div`
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #EEF2FF;
+    color: #6B7280;
+    font-size: 13px;
+    line-height: 1.5;
+
+    strong {
+        display: block;
+        color: #111827;
+        font-size: 14px;
+    }
+`;
+
+const FotoPersona = styled.img`
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #FFFFFF;
+    box-shadow: 0 0 0 2px var(--roxo-moradia);
+`;
+
+const ListaCidades = styled.ul`
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 16px;
+`;
+
+const ItemCidade = styled.li`
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background-color: ${({ $destaque }) => ($destaque ? '#EEF2FF' : 'transparent')};
+`;
+
+const LinhaCidade = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+
+    span {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    svg {
+        color: ${({ $destaque }) => ($destaque ? 'var(--roxo-moradia)' : '#9CA3AF')};
+    }
+`;
+
+const Compatibilidade = styled.span`
+    color: ${({ $destaque }) => ($destaque ? 'var(--roxo-moradia)' : '#6B7280')};
+    font-variant-numeric: tabular-nums;
+`;
+
+const Trilho = styled.div`
+    height: 6px;
+    border-radius: 999px;
+    background-color: ${({ $destaque }) => ($destaque ? '#FFFFFF' : '#F3F4F6')};
+    overflow: hidden;
+`;
+
+const Barra = styled.div`
+    height: 100%;
+    width: ${({ $valor }) => $valor}%;
+    border-radius: 999px;
+    background-color: ${({ $destaque }) => ($destaque ? 'var(--roxo-moradia)' : '#A5B4FC')};
+    transform-origin: left;
+    animation: ${preencher} 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: ${({ $atraso }) => $atraso}s;
+
+    @media (prefers-reduced-motion: reduce) {
+        animation: none;
+    }
+`;
+
+const Criterios = styled.div`
+    margin-top: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-family: var(--fonte-moradia);
+    font-size: 13px;
+    color: #6B7280;
+`;
+
+const ListaCriterios = styled.ul`
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    max-width: 520px;
+
+    li {
+        padding: 6px 12px;
+        border-radius: 999px;
+        border: 1px solid #C7D2FE;
+        background-color: #FFFFFF;
+        color: #3730A3;
+        font-weight: 500;
+    }
+`;
 
 const LoginSection = styled.section`
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   padding: 0 100px;
-  height: 960px;
+  height: 100vh;
   width: 25%;
+  flex-shrink: 0;
   background-color: #FFF;
-  border-bottom: solid 1px #E5E7EB; 
+  border-bottom: solid 1px #E5E7EB;
 `
 const AncoraNav = styled.a`
     text-decoration: none;
@@ -68,11 +263,11 @@ const AncoraNav = styled.a`
 
     display: inline-flex;
     align-items: center;
-    gap: 8px; 
+    gap: 8px;
 
     &:hover{
         border-radius: 8px;
-        background-color: rgba(238, 242, 255, 0.7); 
+        background-color: rgba(238, 242, 255, 0.7);
     }
 `;
 
@@ -80,7 +275,7 @@ const FormContainer = styled.div`
     display: flex;
     flex-direction: column;
     gap: 32px;
-    margin-top: 100px;
+    margin-top: 72px;
     width: 100%;
     max-width: 450px;
 `;
@@ -92,7 +287,7 @@ const CabecalhoFormulario = styled.div`
 `;
 
 const TituloFormulario = styled.h3`
-    margin: 0;
+    margin: 16px 0 0;
     font-family: var(--fonte-moradia), sans-serif;
     font-weight: 700;
     font-size: 24px;
@@ -111,182 +306,76 @@ const DescricaoFormulario = styled.p`
 const GrupoBotoes = styled.div`
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 10px;
 `;
 
 const BotaoSocial = styled.button`
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
+    gap: 8px;
     width: 100%;
-    padding: 14px 24px;
+    padding: 12px 20px;
     background-color: #FFFFFF;
     border: 1px solid #E5E7EB;
     border-radius: 8px;
     font-family: "Inter", sans-serif;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
     color: #111827;
     cursor: pointer;
     transition: background-color 0.2s, border-color 0.2s;
 
     &:hover {
-        background-color: #F9FAFB;
-        border-color: #D1D5DB;
+        background-color: #EEF2FF;
+        border-color: #A5B4FC;
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--roxo-moradia);
+        outline-offset: 2px;
+    }
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: default;
     }
 `;
 
-const Divisor = styled.div`
+const MensagemErro = styled.p`
+    font-family: var(--fonte-moradia);
+    font-size: 13px;
+    color: #B91C1C;
+`;
+
+const AvisoConta = styled.div`
     display: flex;
-    align-items: center;
-    text-align: center;
-    color: #9CA3AF;
-    font-family: "Inter", sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    
-    &::before,
-    &::after {
-        content: '';
-        flex: 1;
-        border-bottom: 1px solid #E5E7EB;
-    }
-
-    &::before {
-        margin-right: 16px;
-    }
-    &::after {
-        margin-left: 16px;
-    }
-`;
-
-const Form = styled.form`
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-`;
-
-const InputGroup = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-`;
-
-const Label = styled.label`
-    font-family: "Inter", sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    color: #111827;
-`;
-
-const InputWrapper = styled.div`
-    position: relative;
-    display: flex;
-    align-items: center;
-`;
-
-const Input = styled.input`
-    width: 100%;
+    align-items: flex-start;
+    gap: 12px;
     padding: 14px 16px;
-    border: 1px solid #D1D5DB;
-    border-radius: 8px;
-    font-family: "Inter", sans-serif;
-    font-size: 16px;
-    color: #111827;
-    outline: none;
-    transition: border-color 0.2s;
+    border-radius: 10px;
+    background-color: #EEF2FF;
+    font-family: var(--fonte-moradia);
+    font-size: 13px;
+    line-height: 1.5;
+    color: #4B5563;
 
-    &:focus {
-        border-color: #5A5CE5;
+    svg {
+        flex-shrink: 0;
+        margin-top: 2px;
+        color: var(--roxo-moradia);
     }
 
-    &::placeholder {
-        color: #9CA3AF;
-    }
-`;
-
-const BotaoOlho = styled.button`
-    position: absolute;
-    right: 16px;
-    background: none;
-    border: none;
-    color: #6B7280;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    
-    &:hover {
-        color: #374151;
-    }
-`;
-
-const OpcoesExtras = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 4px;
-`;
-
-const CheckboxContainer = styled.label`
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-family: "Inter", sans-serif;
-    font-size: 16px;
-    color: #6B7280;
-    cursor: pointer;
-`;
-
-const CheckboxInput = styled.input`
-    width: 20px;
-    height: 20px;
-    accent-color: #5A5CE5; 
-    cursor: pointer;
-    font-size: 14px;
-    border-radius: 4px;
-`;
-
-const LinkSenha = styled.a`
-    font-family: "Inter", sans-serif;
-    font-size: 16px;
-    font-weight: 600;
-    color: #5A5CE5;
-    text-decoration: none;
-    cursor: pointer;
-
-    &:hover {
-        text-decoration: underline;
-    }
-`;
-
-const BotaoSubmit = styled.button`
-    width: 100%;
-    padding: 16px 24px;
-    background-color: #5A5CE5; /* Azul da imagem */
-    color: #FFFFFF;
-    border: none;
-    border-radius: 8px;
-    font-family: "Inter", sans-serif;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    margin-top: 8px;
-
-    &:hover {
-        background-color: #494bbd;
+    strong {
+        color: #3730A3;
     }
 `;
 
 const TextoTermos = styled.p`
     font-family: "Inter", sans-serif;
-    font-size: 14px;
+    font-size: 12px;
     color: #9CA3AF;
     text-align: center;
-    margin-top: 32px;
     line-height: 1.5;
 `;
 
@@ -296,36 +385,63 @@ const LinkTermos = styled.a`
     cursor: pointer;
 
     &:hover {
-        color: #6B7280;
+        color: var(--roxo-moradia);
     }
 `;
 
-function Login(){
-    const [mostrarSenha, setMostrarSenha] = useState(false);
+const cidadesExemplo = [
+    { nome: "Curitiba, PR", valor: 94 },
+    { nome: "Florianópolis, SC", valor: 89 },
+    { nome: "Belo Horizonte, MG", valor: 83 },
+];
 
-    const toggleMostrarSenha = (e) => {
-        e.preventDefault(); 
-        setMostrarSenha(!mostrarSenha);
-    };
+const criterios = [
+    "Custo de vida",
+    "Vagas na sua área",
+    "Segurança",
+    "Transporte público",
+    "Clima",
+    "Lazer e cultura",
+];
+
+function Login(){
+    const [provedorCarregando, setProvedorCarregando] = useState(null);
+    const [erro, setErro] = useState('');
+
+    async function handleEntrar(provedor) {
+        setErro('');
+        setProvedorCarregando(provedor);
+        // Em caso de sucesso o navegador é redirecionado para o provedor
+        const { error } = await entrarCom(provedor);
+        if (error) {
+            setErro('Não foi possível entrar agora. Tente novamente.');
+            setProvedorCarregando(null);
+        }
+    }
+
     return(
-        
+
         <CampoApresentacao>
         <LoginSection>
-            <AncoraNav href='https://github.com/tmzhenrique' target='_blank'>
-                   <FaArrowLeft size={14} /> Voltar ao site 
-                </AncoraNav> 
+                <NavContainer>
+                    <VoltarLink href="https://github.com/tmzhenrique" target="_blank" rel="noopener noreferrer">
+                        <FaChevronLeft size={12} /> Voltar ao site
+                    </VoltarLink>
+                </NavContainer>
+
                 <FormContainer>
                     <CabecalhoFormulario>
+                        
                         <TituloFormulario>Acesse sua conta</TituloFormulario>
                         <DescricaoFormulario>
-                            Insira seus dados para continuar sua jornada de descoberta.
+                            Entre ou crie sua conta com um clique para continuar sua jornada de descoberta.
                         </DescricaoFormulario>
                     </CabecalhoFormulario>
 
                     <GrupoBotoes>
-                        <BotaoSocial>
+                        <BotaoSocial onClick={() => handleEntrar('google')} disabled={provedorCarregando !== null}>
                             <FaGoogle size={16} />
-                            Continuar com o Google
+                            {provedorCarregando === 'google' ? 'Redirecionando...' : 'Continuar com o Google'}
                         </BotaoSocial>
                         <BotaoSocial>
                             <FaMicrosoft size={16} />
@@ -336,43 +452,15 @@ function Login(){
                             Continuar com a Apple
                         </BotaoSocial>
                     </GrupoBotoes>
-                    <Divisor>OU USAR E-MAIL</Divisor>
 
-                    <Form>
-                        <InputGroup>
-                            <Label htmlFor="email">Endereço de e-mail</Label>
-                            <Input 
-                                type="email" 
-                                id="email" 
-                                placeholder="contato@moradia.com.br" 
-                            />
-                        </InputGroup>
+                    {erro && <MensagemErro role="alert">{erro}</MensagemErro>}
 
-                        <InputGroup>
-                            <Label htmlFor="senha">Sua senha</Label>
-                            <InputWrapper>
-                                <Input 
-                                    type={mostrarSenha ? "text" : "password"} 
-                                    id="senha" 
-                                    placeholder="••••••••••••" 
-                                />
-                                <BotaoOlho onClick={toggleMostrarSenha}>
-                                    {mostrarSenha ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
-                                </BotaoOlho>
-                            </InputWrapper>
-                        </InputGroup>
-
-                        <OpcoesExtras>
-                            <CheckboxContainer>
-                                <CheckboxInput type="checkbox" />
-                                Lembrar de mim
-                            </CheckboxContainer>
-                            
-                            <LinkSenha href="#">Esqueceu a senha?</LinkSenha>
-                        </OpcoesExtras>
-
-                        <BotaoSubmit type="button">Entrar na plataforma</BotaoSubmit>
-                    </Form>
+                    <AvisoConta>
+                        <FaLock size={14} />
+                        <span>
+                            <strong>Primeira vez aqui?</strong> Sua conta é criada automaticamente no primeiro acesso. Sem senha para lembrar.
+                        </span>
+                    </AvisoConta>
 
                     <TextoTermos>
                         Ao continuar, você concorda com os nossos <LinkTermos href="#">Termos de Serviço</LinkTermos> e nossa <LinkTermos href="#">Política de Privacidade</LinkTermos>.
@@ -380,12 +468,48 @@ function Login(){
 
                 </FormContainer>
         </LoginSection>
+        
             <DivTextos>
                 <TextosApresentacao>
                     <TituloApresentacao>Descubra o destino ideal para o seu próximo capítulo.</TituloApresentacao>
                     <DescricaoApresentacao>Conectamos seu estilo de vida, orçamento e metas de carreira com a infraestrutura das melhores cidades do país.</DescricaoApresentacao>
-                    
                 </TextosApresentacao>
+
+                <CartaoAnalise>
+                    <Perfil>
+                        <FotoPersona src={FotoPersonaImg} alt="Foto da persona do exemplo" />
+                        <div>
+                            <strong>Desenvolvedora, orçamento de R$ 4.500/mês</strong>
+                            Quer trabalho híbrido, clima ameno e boa oferta de parques.
+                        </div>
+                    </Perfil>
+
+                    <ListaCidades>
+                        {cidadesExemplo.map((cidade, indice) => {
+                            const destaque = indice === 0;
+                            return (
+                                <ItemCidade key={cidade.nome} $destaque={destaque}>
+                                    <LinhaCidade $destaque={destaque}>
+                                        <span><FaMapMarkerAlt size={12} /> {cidade.nome}</span>
+                                        <Compatibilidade $destaque={destaque}>{cidade.valor}% compatível</Compatibilidade>
+                                    </LinhaCidade>
+                                    <Trilho $destaque={destaque}>
+                                        <Barra $valor={cidade.valor} $destaque={destaque} $atraso={0.2 + indice * 0.15} />
+                                    </Trilho>
+                                </ItemCidade>
+                            );
+                        })}
+                    </ListaCidades>
+                </CartaoAnalise>
+
+                <Criterios>
+                    O que a moradIA compara para você:
+                    <ListaCriterios>
+                        {criterios.map((criterio) => (
+                            <li key={criterio}>{criterio}</li>
+                        ))}
+                    </ListaCriterios>
+                </Criterios>
             </DivTextos>
         </CampoApresentacao>
     )
