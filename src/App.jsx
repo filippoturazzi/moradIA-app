@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from './lib/supabase.js';
 import Login from './componentes/Login/index.jsx';
-import Inicio from './componentes/Inicio/index.jsx';
+import Dashboard from './componentes/Dashboard/index.jsx';
 
 
 function App(){
@@ -21,11 +21,15 @@ function App(){
     return () => data.subscription.unsubscribe();
   }, []);
 
+  function iniciarAnalise() {
+    // Ligar ao onboarding (etapa 1/8) quando ele for implementado.
+  }
+
   if (carregando) return null;
 
   return(
     <>
-      {sessao ? <Inicio usuario={sessao.user} /> : <Login />}
+      {sessao ? <Dashboard usuario={sessao.user} onIniciarAnalise={iniciarAnalise} /> : <Login />}
     </>
   )
 }
