@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import styled, { keyframes } from "styled-components"
-import { FaArrowLeft, FaGoogle, FaMicrosoft, FaApple, FaChevronLeft, FaMapMarkerAlt, FaLock} from 'react-icons/fa';
-import MoradIALogo from '../../assets/MoradIALogo.svg';
+import { FaGoogle, FaMicrosoft, FaApple, FaChevronLeft, FaMapMarkerAlt, FaLock} from 'react-icons/fa';
 import FotoPersonaImg from '../../assets/persona.jpeg';
 import { entrarCom } from '../../lib/supabase.js';
 
@@ -28,35 +27,6 @@ const VoltarLink = styled.a`
     &:hover {
         color: var(--roxo-moradia);
     }
-`;
-
-const Marca = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 10px;
-`;
-
-const MarcaIcone = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    background-color: var(--roxo-moradia);
-
-    img {
-        width: 22px;
-        height: 22px;
-    }
-`;
-
-const MarcaNome = styled.span`
-    font-family: var(--fonte-moradia);
-    font-weight: 700;
-    font-size: 18px;
-    letter-spacing: -0.02em;
-    color: #111827;
 `;
 
 const CampoApresentacao = styled.section`
@@ -246,31 +216,6 @@ const LoginSection = styled.section`
   background-color: #FFF;
   border-bottom: solid 1px #E5E7EB;
 `
-const AncoraNav = styled.a`
-    text-decoration: none;
-    font-family: "Inter", sans-serif;
-    font-weight: 500;
-    font-size: 14px;
-    padding: 4px 14px;
-    color: #6B7280;
-    cursor: pointer;
-    margin-top: -870px;
-    margin-left: -50px;
-
-    position: absolute;
-    top: 45px;
-    left: 50px
-
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-
-    &:hover{
-        border-radius: 8px;
-        background-color: rgba(238, 242, 255, 0.7);
-    }
-`;
-
 const FormContainer = styled.div`
     display: flex;
     flex-direction: column;
