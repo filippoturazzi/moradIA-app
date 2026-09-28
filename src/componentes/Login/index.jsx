@@ -326,7 +326,7 @@ const BotaoSocial = styled.button`
     cursor: pointer;
     transition: background-color 0.2s, border-color 0.2s;
 
-    &:hover {
+    &:hover:not(:disabled) {
         background-color: #EEF2FF;
         border-color: #A5B4FC;
     }
@@ -340,6 +340,24 @@ const BotaoSocial = styled.button`
         opacity: 0.6;
         cursor: default;
     }
+`;
+
+const BotaoEmBreve = styled(BotaoSocial)`
+    &:disabled {
+        opacity: 1;
+        color: #9CA3AF;
+        background-color: #F9FAFB;
+        cursor: not-allowed;
+    }
+`;
+
+const EtiquetaEmBreve = styled.span`
+    padding: 2px 8px;
+    border-radius: 999px;
+    background-color: #EEF2FF;
+    color: #3730A3;
+    font-size: 11px;
+    font-weight: 600;
 `;
 
 const MensagemErro = styled.p`
@@ -443,14 +461,16 @@ function Login(){
                             <FaGoogle size={16} />
                             {provedorCarregando === 'google' ? 'Redirecionando...' : 'Continuar com o Google'}
                         </BotaoSocial>
-                        <BotaoSocial>
+                        <BotaoEmBreve disabled>
                             <FaMicrosoft size={16} />
                             Continuar com o Outlook
-                        </BotaoSocial>
-                        <BotaoSocial>
+                            <EtiquetaEmBreve>Em breve</EtiquetaEmBreve>
+                        </BotaoEmBreve>
+                        <BotaoEmBreve disabled>
                             <FaApple size={18} />
                             Continuar com a Apple
-                        </BotaoSocial>
+                            <EtiquetaEmBreve>Em breve</EtiquetaEmBreve>
+                        </BotaoEmBreve>
                     </GrupoBotoes>
 
                     {erro && <MensagemErro role="alert">{erro}</MensagemErro>}
