@@ -1,6 +1,6 @@
 // Opções e dados de exemplo da tela de perfil enquanto não há backend.
 
-export const opcoesGenero = ['Feminino', 'Masculino', 'Não-binário', 'Prefiro não informar'];
+export const opcoesGenero = ['Feminino', 'Masculino'];
 
 export const opcoesEstadoCivil = ['Solteiro(a)', 'Casado(a)', 'União estável', 'Divorciado(a)', 'Viúvo(a)'];
 

@@ -442,7 +442,9 @@ function membroDesde(data) {
 
 // Formata enquanto digita: +55 (11) 98765-4321.
 function formatarTelefone(valor) {
-    let digitos = valor.replace(/\D/g, '');
+    // Remove o "+55" que a própria máscara insere, senão ele é relido como DDD a cada tecla.
+    const semPais = valor.trimStart().startsWith('+55') ? valor.trimStart().slice(3) : valor;
+    let digitos = semPais.replace(/\D/g, '');
     if (digitos.startsWith('55') && digitos.length > 11) digitos = digitos.slice(2);
     digitos = digitos.slice(0, 11);
     if (!digitos) return '';
