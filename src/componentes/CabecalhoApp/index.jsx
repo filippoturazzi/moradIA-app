@@ -103,6 +103,23 @@ const BotaoNovaAnalise = styled.button`
     }
 `;
 
+const BotaoAvatar = styled.button`
+    display: flex;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: none;
+    box-shadow: ${({ $ativo }) => ($ativo ? '0 0 0 2px #FFFFFF, 0 0 0 4px var(--roxo-moradia)' : 'none')};
+    cursor: ${({ $ativo }) => ($ativo ? 'default' : 'pointer')};
+    transition: box-shadow 0.2s;
+
+    &:hover,
+    &:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 4px var(--roxo-moradia);
+    }
+`;
+
 const Avatar = styled.img`
     width: 36px;
     height: 36px;
@@ -195,9 +212,18 @@ function CabecalhoApp({ usuario, paginaAtiva, onNavegar, onNovaAnalise }){
                 <BotaoNovaAnalise onClick={onNovaAnalise} aria-label="Nova Análise">
                     <FiPlus /> <span>Nova Análise</span>
                 </BotaoNovaAnalise>
-                {avatar_url
-                    ? <Avatar src={avatar_url} alt={full_name ?? ''} referrerPolicy="no-referrer" />
-                    : <AvatarIniciais aria-hidden="true">{inicial}</AvatarIniciais>}
+                <BotaoAvatar
+                    type="button"
+                    onClick={onNavegar && paginaAtiva !== 'perfil' ? () => onNavegar('perfil') : undefined}
+                    $ativo={paginaAtiva === 'perfil'}
+                    title="Meu perfil"
+                    aria-label="Meu perfil"
+                    aria-current={paginaAtiva === 'perfil' ? 'page' : undefined}
+                >
+                    {avatar_url
+                        ? <Avatar src={avatar_url} alt="" referrerPolicy="no-referrer" />
+                        : <AvatarIniciais aria-hidden="true">{inicial}</AvatarIniciais>}
+                </BotaoAvatar>
                 <BotaoSair onClick={handleSair} disabled={saindo} title="Sair" aria-label="Sair">
                     <FiLogOut />
                 </BotaoSair>
