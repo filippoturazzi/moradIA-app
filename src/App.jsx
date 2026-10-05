@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react';
 import { supabase } from './lib/supabase.js';
 import Login from './componentes/Login/index.jsx';
 import Dashboard from './componentes/Dashboard/index.jsx';
+import Perfil from './componentes/Perfil/index.jsx';
 
 
 function App(){
   const [sessao, setSessao] = useState(null);
   const [carregando, setCarregando] = useState(true);
+  const [pagina, setPagina] = useState('dashboard');
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -21,17 +23,21 @@ function App(){
     return () => data.subscription.unsubscribe();
   }, []);
 
+  function navegar(novaPagina) {
+    setPagina(novaPagina);
+    window.scrollTo(0, 0);
+  }
+
   function iniciarAnalise() {
     // Ligar ao onboarding (etapa 1/8) quando ele for implementado.
   }
 
   if (carregando) return null;
+  if (!sessao) return <Login />;
 
-  return(
-    <>
-      {sessao ? <Dashboard usuario={sessao.user} onIniciarAnalise={iniciarAnalise} /> : <Login />}
-    </>
-  )
+  return pagina === 'perfil'
+    ? <Perfil usuario={sessao.user} onNavegar={navegar} onNovaAnalise={iniciarAnalise} />
+    : <Dashboard usuario={sessao.user} onNavegar={navegar} onIniciarAnalise={iniciarAnalise} />;
 }
 
 export default App;

@@ -351,7 +351,7 @@ function CartaoIndicador({ icone, rotulo, valor, detalhe, compacto, cor }) {
     );
 }
 
-function Dashboard({ usuario, onIniciarAnalise, analises = analisesExemplo }){
+function Dashboard({ usuario, onNavegar, onIniciarAnalise, analises = analisesExemplo }){
     const { full_name } = usuario.user_metadata ?? {};
     const primeiroNome = full_name?.split(' ')[0];
     const {
@@ -360,7 +360,7 @@ function Dashboard({ usuario, onIniciarAnalise, analises = analisesExemplo }){
 
     return(
         <Pagina>
-            <CabecalhoApp usuario={usuario} paginaAtiva="Dashboard" onNovaAnalise={onIniciarAnalise} />
+            <CabecalhoApp usuario={usuario} paginaAtiva="dashboard" onNavegar={onNavegar} onNovaAnalise={onIniciarAnalise} />
 
             <Conteudo>
                 <Saudacao>

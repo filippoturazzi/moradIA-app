@@ -62,7 +62,12 @@ const LinkNavegacao = styled.button`
     font-size: 14px;
     font-weight: ${({ $ativo }) => ($ativo ? 700 : 500)};
     color: ${({ $ativo }) => ($ativo ? 'var(--roxo-moradia)' : '#6B7280')};
-    cursor: ${({ $ativo }) => ($ativo ? 'default' : 'not-allowed')};
+    cursor: ${({ $ativo, $disponivel }) => ($ativo ? 'default' : $disponivel ? 'pointer' : 'not-allowed')};
+    transition: color 0.2s;
+
+    &:hover {
+        color: ${({ $ativo, $disponivel }) => ($ativo || $disponivel ? 'var(--roxo-moradia)' : '#6B7280')};
+    }
 `;
 
 const Acoes = styled.div`
@@ -142,9 +147,15 @@ const BotaoSair = styled.button`
     }
 `;
 
-const linksNavegacao = ['Dashboard', 'Minhas cidades', 'Comparar', 'Meu perfil'];
+// Links sem `pagina` ainda não têm tela implementada.
+const linksNavegacao = [
+    { rotulo: 'Dashboard', pagina: 'dashboard' },
+    { rotulo: 'Minhas cidades' },
+    { rotulo: 'Comparar' },
+    { rotulo: 'Meu perfil', pagina: 'perfil' },
+];
 
-function CabecalhoApp({ usuario, paginaAtiva, onNovaAnalise }){
+function CabecalhoApp({ usuario, paginaAtiva, onNavegar, onNovaAnalise }){
     const [saindo, setSaindo] = useState(false);
     const { full_name, avatar_url } = usuario.user_metadata ?? {};
     const inicial = (full_name ?? usuario.email ?? '?').charAt(0).toUpperCase();
@@ -162,16 +173,22 @@ function CabecalhoApp({ usuario, paginaAtiva, onNovaAnalise }){
             </Logo>
 
             <Navegacao>
-                {linksNavegacao.map((link) => (
-                    <LinkNavegacao
-                        key={link}
-                        $ativo={link === paginaAtiva}
-                        aria-current={link === paginaAtiva ? 'page' : undefined}
-                        title={link === paginaAtiva ? undefined : 'Em breve'}
-                    >
-                        {link}
-                    </LinkNavegacao>
-                ))}
+                {linksNavegacao.map(({ rotulo, pagina }) => {
+                    const ativo = pagina !== undefined && pagina === paginaAtiva;
+                    const disponivel = Boolean(pagina && onNavegar);
+                    return (
+                        <LinkNavegacao
+                            key={rotulo}
+                            $ativo={ativo}
+                            $disponivel={disponivel}
+                            aria-current={ativo ? 'page' : undefined}
+                            title={disponivel ? undefined : 'Em breve'}
+                            onClick={disponivel && !ativo ? () => onNavegar(pagina) : undefined}
+                        >
+                            {rotulo}
+                        </LinkNavegacao>
+                    );
+                })}
             </Navegacao>
 
             <Acoes>
