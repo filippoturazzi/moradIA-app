@@ -28,14 +28,4 @@ export const opcoesPrioridades = [
     'Praia',
 ];
 
-export const descricoesCidades = {
-    'Curitiba, PR': 'Capital ecológica • Excelente mobilidade urbana e parques fáceis.',
-    'Florianópolis, SC': 'Praias, segurança excelente e ecossistema tech vibrante.',
-    'Belo Horizonte, MG': 'Excelente custo-benefício, gastronomia e cultura rica.',
-    'Joinville, SC': 'Polo industrial organizado, seguro e com ótima qualidade de vida.',
-    'Campinas, SP': 'Centro de tecnologia e pesquisa, perto da capital paulista.',
-    'Porto Alegre, RS': 'Cultura forte, boa oferta de serviços e clima de quatro estações.',
-};
-
-export const cidadesSalvasExemplo = 5;
 export const comparativosExemplo = 3;

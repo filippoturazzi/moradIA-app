@@ -3,10 +3,11 @@ import styled from "styled-components"
 import { FiCheck } from 'react-icons/fi';
 import CabecalhoApp from '../CabecalhoApp/index.jsx';
 import Selecao from '../Selecao/index.jsx';
+import CidadesSalvas from '../CidadesSalvas/index.jsx';
 import { supabase } from '../../lib/supabase.js';
 import { analisesExemplo } from '../../dados/analisesExemplo.js';
 import {
-    cidadesSalvasExemplo, comparativosExemplo, descricoesCidades,
+    comparativosExemplo,
     opcoesEstadoCivil, opcoesGenero, opcoesModeloTrabalho, opcoesOrcamento, opcoesPrioridades,
 } from '../../dados/perfilExemplo.js';
 
@@ -330,46 +331,6 @@ const BotaoPrimario = styled(Botao)`
     }
 `;
 
-const GradeResultados = styled.div`
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-
-    @media (max-width: 900px) {
-        grid-template-columns: 1fr;
-    }
-`;
-
-const CartaoCidade = styled.article`
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-    min-width: 0;
-    padding: 20px;
-    border: 1px solid #E5E7EB;
-    border-radius: 16px;
-
-    p {
-        flex: 1;
-    }
-`;
-
-const LinhaCidade = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    width: 100%;
-`;
-
-const NomeCidade = styled.h3`
-    margin: 0;
-    font-size: 18px;
-    font-weight: 800;
-    color: #111827;
-`;
-
 const Selo = styled.span`
     flex-shrink: 0;
     padding: ${({ $pilula }) => ($pilula ? '6px 14px' : '4px 8px')};
@@ -379,15 +340,6 @@ const Selo = styled.span`
     font-size: 13px;
     font-weight: 700;
     white-space: nowrap;
-`;
-
-const BotaoContorno = styled(Botao)`
-    padding: 8px 16px;
-    border: 1px solid var(--roxo-moradia);
-    background-color: #FFFFFF;
-    color: var(--roxo-moradia);
-    font-size: 13px;
-    font-weight: 700;
 `;
 
 const ListaSeguranca = styled.ul`
@@ -429,8 +381,8 @@ const BotaoNeutro = styled(Botao)`
 const secoes = [
     { id: 'dados-pessoais', rotulo: 'Dados Pessoais' },
     { id: 'preferencias', rotulo: 'Preferências de Moradia' },
-    { id: 'seguranca', rotulo: 'Segurança da Conta' },
     { id: 'cidades-salvas', rotulo: 'Cidades Salvas' },
+    { id: 'seguranca', rotulo: 'Segurança da Conta' },
 ];
 
 const formatoMembroDesde = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' });
@@ -559,8 +511,7 @@ function Perfil({ usuario, onNavegar, onNovaAnalise, analises = analisesExemplo 
             : [...atuais, prioridade]);
     }
 
-    const ultimaAnalise = [...analises].sort((a, b) => b.data.localeCompare(a.data))[0];
-    const principaisResultados = ultimaAnalise?.cidades ?? [];
+    const cidadesSalvas = perfil.cidadesSalvas ?? [];
 
     return(
         <Pagina>
@@ -582,7 +533,7 @@ function Perfil({ usuario, onNavegar, onNovaAnalise, analises = analisesExemplo 
 
                     <Estatisticas>
                         <div><dt>Análises Realizadas</dt><dd>{analises.length} análises</dd></div>
-                        <div><dt>Cidades Salvas</dt><dd>{cidadesSalvasExemplo} cidades</dd></div>
+                        <div><dt>Cidades Salvas</dt><dd>{cidadesSalvas.length} {cidadesSalvas.length === 1 ? 'cidade' : 'cidades'}</dd></div>
                         <div><dt>Comparativos</dt><dd>{comparativosExemplo} salvos</dd></div>
                     </Estatisticas>
 
@@ -700,32 +651,13 @@ function Perfil({ usuario, onNavegar, onNovaAnalise, analises = analisesExemplo 
 
                     <Cartao id="cidades-salvas">
                         <CabecalhoSecao
-                            titulo="Seus Principais Resultados"
-                            descricao="Cidades com maior compatibilidade de acordo com suas simulações recentes"
+                            titulo="Cidades Salvas"
+                            descricao="Pesquise e salve as cidades que você quer acompanhar"
                         />
-                        {principaisResultados.length > 0 ? (
-                            <GradeResultados>
-                                {principaisResultados.map(({ nome, uf, match }, indice) => {
-                                    const cidade = `${nome}, ${uf}`;
-                                    return (
-                                        <CartaoCidade key={cidade}>
-                                            <LinhaCidade>
-                                                <NomeCidade>{cidade}</NomeCidade>
-                                                <Selo $cor={indice === 0 ? 'verde' : 'roxo'}>
-                                                    {match}% Match
-                                                </Selo>
-                                            </LinhaCidade>
-                                            <TextoSuave>{descricoesCidades[cidade]}</TextoSuave>
-                                            <BotaoContorno type="button" disabled title="Em breve">
-                                                Ver detalhes completos
-                                            </BotaoContorno>
-                                        </CartaoCidade>
-                                    );
-                                })}
-                            </GradeResultados>
-                        ) : (
-                            <TextoSuave>Faça sua primeira análise para ver as cidades que mais combinam com você.</TextoSuave>
-                        )}
+                        <CidadesSalvas
+                            cidades={cidadesSalvas}
+                            onSalvar={(lista) => salvarPerfil({ cidadesSalvas: lista })}
+                        />
                     </Cartao>
 
                     <Cartao id="seguranca">
