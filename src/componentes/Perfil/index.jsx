@@ -5,11 +5,9 @@ import CabecalhoApp from '../CabecalhoApp/index.jsx';
 import Selecao from '../Selecao/index.jsx';
 import CidadesSalvas from '../CidadesSalvas/index.jsx';
 import { supabase } from '../../lib/supabase.js';
-import { analisesExemplo } from '../../dados/analisesExemplo.js';
 import {
-    comparativosExemplo,
     opcoesEstadoCivil, opcoesGenero, opcoesModeloTrabalho, opcoesOrcamento, opcoesPrioridades,
-} from '../../dados/perfilExemplo.js';
+} from '../../dados/opcoesPerfil.js';
 
 const Pagina = styled.div`
     min-height: 100vh;
@@ -478,7 +476,7 @@ function CabecalhoSecao({ titulo, descricao }) {
     );
 }
 
-function Perfil({ usuario, onNavegar, onNovaAnalise, analises = analisesExemplo }){
+function Perfil({ usuario, onNavegar, onNovaAnalise, analises = [], comparativos = [] }){
     const metadados = usuario.user_metadata ?? {};
     const perfil = metadados.perfil ?? {};
     const nomeExibido = perfil.nome || metadados.full_name || usuario.email;
@@ -532,9 +530,9 @@ function Perfil({ usuario, onNavegar, onNovaAnalise, analises = analisesExemplo 
                     <Divisoria />
 
                     <Estatisticas>
-                        <div><dt>Análises Realizadas</dt><dd>{analises.length} análises</dd></div>
+                        <div><dt>Análises Realizadas</dt><dd>{analises.length} {analises.length === 1 ? 'análise' : 'análises'}</dd></div>
                         <div><dt>Cidades Salvas</dt><dd>{cidadesSalvas.length} {cidadesSalvas.length === 1 ? 'cidade' : 'cidades'}</dd></div>
-                        <div><dt>Comparativos</dt><dd>{comparativosExemplo} salvos</dd></div>
+                        <div><dt>Comparativos</dt><dd>{comparativos.length} {comparativos.length === 1 ? 'salvo' : 'salvos'}</dd></div>
                     </Estatisticas>
 
                     <Divisoria />

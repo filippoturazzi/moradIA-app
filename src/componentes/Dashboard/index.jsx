@@ -1,7 +1,6 @@
 import styled from "styled-components"
 import { FiArrowRight, FiAward, FiBarChart2, FiClock, FiMap, FiTrendingUp } from 'react-icons/fi';
 import CabecalhoApp from '../CabecalhoApp/index.jsx';
-import { analisesExemplo } from '../../dados/analisesExemplo.js';
 import { calcularIndicadores } from '../../dados/indicadores.js';
 
 const Pagina = styled.div`
@@ -327,6 +326,16 @@ const BotaoPrimario = styled(BotaoIniciar)`
     color: #FFFFFF;
 `;
 
+const ListaVazia = styled.p`
+    padding: 24px 0 8px;
+    font-size: 14px;
+    color: #9CA3AF;
+    text-align: center;
+`;
+
+// Exibido nos indicadores enquanto não há análises.
+const SEM_DADO = '--';
+
 const formatoData = new Intl.DateTimeFormat('pt-BR', {
     day: '2-digit',
     month: 'short',
@@ -351,7 +360,7 @@ function CartaoIndicador({ icone, rotulo, valor, detalhe, compacto, cor }) {
     );
 }
 
-function Dashboard({ usuario, onNavegar, onIniciarAnalise, analises = analisesExemplo }){
+function Dashboard({ usuario, onNavegar, onIniciarAnalise, analises = [] }){
     const { full_name } = usuario.user_metadata ?? {};
     const primeiroNome = full_name?.split(' ')[0];
     const {
@@ -384,96 +393,106 @@ function Dashboard({ usuario, onNavegar, onIniciarAnalise, analises = analisesEx
                         </BotaoPrimario>
                     </Vazio>
                 ) : (
-                    <>
-                        <BannerAnalise>
-                            <TextosBanner>
-                                <EtiquetaBanner>Nova análise</EtiquetaBanner>
-                                <TituloBanner>Pronto para descobrir sua próxima cidade?</TituloBanner>
-                                <TextoBanner>
-                                    Suas prioridades mudaram? Responda 8 etapas rápidas e receba um novo ranking de cidades com o seu percentual de match.
-                                </TextoBanner>
-                            </TextosBanner>
-                            <BotaoIniciar onClick={onIniciarAnalise}>
-                                Iniciar nova análise <FiArrowRight />
-                            </BotaoIniciar>
-                        </BannerAnalise>
-
-                        <GradeIndicadores aria-label="Indicadores">
-                            <CartaoIndicador
-                                icone={<FiBarChart2 />}
-                                rotulo="Análises realizadas"
-                                valor={totalAnalises}
-                                detalhe={`Última em ${formatoData.format(new Date(recentes[0].data))}`}
-                            />
-                            <CartaoIndicador
-                                icone={<FiAward />}
-                                rotulo="Cidade mais recomendada"
-                                valor={cidadeMaisRecomendada.cidade}
-                                detalhe={`1º lugar em ${cidadeMaisRecomendada.vezes} de ${totalAnalises} análises`}
-                                compacto
-                            />
-                            <CartaoIndicador
-                                icone={<FiTrendingUp />}
-                                rotulo="Melhor match obtido"
-                                valor={`${melhorMatch.match}%`}
-                                detalhe={melhorMatch.cidade}
-                                cor="#10B981"
-                            />
-                            <CartaoIndicador
-                                icone={<FiMap />}
-                                rotulo="Cidades avaliadas"
-                                valor={cidadesAvaliadas}
-                                detalhe="Diferentes cidades nos seus rankings"
-                            />
-                        </GradeIndicadores>
-
-                        <DuasColunas>
-                            <Cartao>
-                                <CabecalhoCartao>
-                                    <TituloCartao>Cidades que mais aparecem para você</TituloCartao>
-                                    <DescricaoCartao>Frequência nos seus rankings e match médio</DescricaoCartao>
-                                </CabecalhoCartao>
-                                <Lista>
-                                    {ranking.map(({ cidade, aparicoes, matchMedio }, indice) => (
-                                        <ItemLista key={cidade}>
-                                            <Posicao $primeiro={indice === 0}>{indice + 1}</Posicao>
-                                            <InfoCidade>
-                                                <LinhaCidade>
-                                                    <NomeCidade>{cidade}</NomeCidade>
-                                                    <Aparicoes>em {aparicoes} de {totalAnalises} análises</Aparicoes>
-                                                </LinhaCidade>
-                                                <TrilhaBarra>
-                                                    <PreenchimentoBarra $valor={(aparicoes / totalAnalises) * 100} />
-                                                </TrilhaBarra>
-                                            </InfoCidade>
-                                            <SeloMatch valor={matchMedio} sufixo="médio" />
-                                        </ItemLista>
-                                    ))}
-                                </Lista>
-                            </Cartao>
-
-                            <Cartao>
-                                <CabecalhoCartao>
-                                    <TituloCartao>Análises recentes</TituloCartao>
-                                    <DescricaoCartao>Cidade em 1º lugar em cada análise</DescricaoCartao>
-                                </CabecalhoCartao>
-                                <Lista>
-                                    {recentes.map(({ id, data, cidade, match }) => (
-                                        <ItemLista key={id}>
-                                            <InfoCidade>
-                                                <NomeCidade>{cidade}</NomeCidade>
-                                                <DataAnalise>
-                                                    <FiClock /> {formatoData.format(new Date(data))}
-                                                </DataAnalise>
-                                            </InfoCidade>
-                                            <SeloMatch valor={match} />
-                                        </ItemLista>
-                                    ))}
-                                </Lista>
-                            </Cartao>
-                        </DuasColunas>
-                    </>
+                    <BannerAnalise>
+                        <TextosBanner>
+                            <EtiquetaBanner>Nova análise</EtiquetaBanner>
+                            <TituloBanner>Pronto para descobrir sua próxima cidade?</TituloBanner>
+                            <TextoBanner>
+                                Suas prioridades mudaram? Responda 8 etapas rápidas e receba um novo ranking de cidades com o seu percentual de match.
+                            </TextoBanner>
+                        </TextosBanner>
+                        <BotaoIniciar onClick={onIniciarAnalise}>
+                            Iniciar nova análise <FiArrowRight />
+                        </BotaoIniciar>
+                    </BannerAnalise>
                 )}
+
+                <GradeIndicadores aria-label="Indicadores">
+                    <CartaoIndicador
+                        icone={<FiBarChart2 />}
+                        rotulo="Análises realizadas"
+                        valor={totalAnalises}
+                        detalhe={recentes.length > 0
+                            ? `Última em ${formatoData.format(new Date(recentes[0].data))}`
+                            : 'Nenhuma análise ainda'}
+                    />
+                    <CartaoIndicador
+                        icone={<FiAward />}
+                        rotulo="Cidade mais recomendada"
+                        valor={cidadeMaisRecomendada?.cidade ?? SEM_DADO}
+                        detalhe={cidadeMaisRecomendada
+                            ? `1º lugar em ${cidadeMaisRecomendada.vezes} de ${totalAnalises} análises`
+                            : 'Aparece após sua primeira análise'}
+                        compacto={Boolean(cidadeMaisRecomendada)}
+                    />
+                    <CartaoIndicador
+                        icone={<FiTrendingUp />}
+                        rotulo="Melhor match obtido"
+                        valor={melhorMatch ? `${melhorMatch.match}%` : SEM_DADO}
+                        detalhe={melhorMatch?.cidade ?? 'Aparece após sua primeira análise'}
+                        cor={melhorMatch ? '#10B981' : undefined}
+                    />
+                    <CartaoIndicador
+                        icone={<FiMap />}
+                        rotulo="Cidades avaliadas"
+                        valor={cidadesAvaliadas}
+                        detalhe="Diferentes cidades nos seus rankings"
+                    />
+                </GradeIndicadores>
+
+                <DuasColunas>
+                    <Cartao>
+                        <CabecalhoCartao>
+                            <TituloCartao>Cidades que mais aparecem para você</TituloCartao>
+                            <DescricaoCartao>Frequência nos seus rankings e match médio</DescricaoCartao>
+                        </CabecalhoCartao>
+                        {ranking.length > 0 ? (
+                            <Lista>
+                                {ranking.map(({ cidade, aparicoes, matchMedio }, indice) => (
+                                    <ItemLista key={cidade}>
+                                        <Posicao $primeiro={indice === 0}>{indice + 1}</Posicao>
+                                        <InfoCidade>
+                                            <LinhaCidade>
+                                                <NomeCidade>{cidade}</NomeCidade>
+                                                <Aparicoes>em {aparicoes} de {totalAnalises} análises</Aparicoes>
+                                            </LinhaCidade>
+                                            <TrilhaBarra>
+                                                <PreenchimentoBarra $valor={(aparicoes / totalAnalises) * 100} />
+                                            </TrilhaBarra>
+                                        </InfoCidade>
+                                        <SeloMatch valor={matchMedio} sufixo="médio" />
+                                    </ItemLista>
+                                ))}
+                            </Lista>
+                        ) : (
+                            <ListaVazia>As cidades dos seus rankings aparecem aqui.</ListaVazia>
+                        )}
+                    </Cartao>
+
+                    <Cartao>
+                        <CabecalhoCartao>
+                            <TituloCartao>Análises recentes</TituloCartao>
+                            <DescricaoCartao>Cidade em 1º lugar em cada análise</DescricaoCartao>
+                        </CabecalhoCartao>
+                        {recentes.length > 0 ? (
+                            <Lista>
+                                {recentes.map(({ id, data, cidade, match }) => (
+                                    <ItemLista key={id}>
+                                        <InfoCidade>
+                                            <NomeCidade>{cidade}</NomeCidade>
+                                            <DataAnalise>
+                                                <FiClock /> {formatoData.format(new Date(data))}
+                                            </DataAnalise>
+                                        </InfoCidade>
+                                        <SeloMatch valor={match} />
+                                    </ItemLista>
+                                ))}
+                            </Lista>
+                        ) : (
+                            <ListaVazia>Suas análises mais recentes aparecem aqui.</ListaVazia>
+                        )}
+                    </Cartao>
+                </DuasColunas>
             </Conteudo>
         </Pagina>
     )

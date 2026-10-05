@@ -1,4 +1,4 @@
-// Opções e dados de exemplo da tela de perfil enquanto não há backend.
+// Opções dos campos de seleção da tela de perfil.
 
 export const opcoesGenero = ['Feminino', 'Masculino'];
 
@@ -27,5 +27,3 @@ export const opcoesPrioridades = [
     'Vida Cultural',
     'Praia',
 ];
-
-export const comparativosExemplo = 3;
